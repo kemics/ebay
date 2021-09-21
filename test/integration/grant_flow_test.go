@@ -2,17 +2,13 @@ package integration
 
 import (
 	"context"
-	"crypto/rand"
 	"flag"
-	"fmt"
-	"io"
-	"net/url"
 	"os"
 	"strings"
 	"testing"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/jybp/ebay"
+	"github.com/kemics/ebay"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -72,53 +68,5 @@ func TestGrantFlows(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	isAuction := false
-	for _, opt := range it.BuyingOptions {
-		if opt == ebay.BrowseBuyingOptionAuction {
-			isAuction = true
-		}
-	}
-	if !isAuction {
-		t.Fatalf("item %s is not an auction. BuyingOptions are: %+v", it.ItemID, it.BuyingOptions)
-	}
-
-	t.Logf("item %s UniqueBidderCount:%d minimumBidPrice: %+v currentPriceToBid: %+v\n", it.ItemID, it.UniqueBidderCount, it.MinimumPriceToBid, it.CurrentBidPrice)
-
-	b := make([]byte, 16)
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
-		t.Fatalf("%+v", err)
-	}
-	state := url.QueryEscape(string(b))
-	serve, teardown, authCodeC, err := oauthServer("ebay test", ":52125", state)
-	if err != nil {
-		t.Fatalf("%+v", err)
-	}
-	go func() { serve() }()
-
-	oauthConf := oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		Endpoint:     ebay.OAuth20SandboxEndpoint,
-		RedirectURL:  redirectURL,
-		Scopes:       []string{ebay.ScopeBuyOfferAuction},
-	}
-
-	url := oauthConf.AuthCodeURL(state)
-	fmt.Printf("Visit the URL: %v\n", url)
-
-	authCode := <-authCodeC
-	defer func() { teardown() }()
-
-	tok, err := oauthConf.Exchange(ctx, authCode)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = ebay.NewSandboxClient(oauth2.NewClient(ctx, ebay.TokenSource(oauthConf.TokenSource(ctx, tok))))
-
-	bid, err := client.Buy.Offer.GetBidding(ctx, it.ItemID, ebay.BuyMarketplaceUSA)
-	if err != nil && !ebay.IsError(err, ebay.ErrGetBiddingNoBiddingActivity) {
-		t.Fatalf("Expected error code %d, got %+v.", ebay.ErrGetBiddingNoBiddingActivity, err)
-	}
-	t.Logf("bidding: %+v", bid)
+	t.Logf("Item ID is %q", it.ItemID)
 }

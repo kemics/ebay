@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/jybp/ebay"
+	"github.com/kemics/ebay"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

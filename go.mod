@@ -1,4 +1,4 @@
-module github.com/jybp/ebay
+module github.com/kemics/ebay
 
 go 1.12
 

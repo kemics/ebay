@@ -14,12 +14,6 @@ import (
 // eBay API docs: https://developer.ebay.com/api-docs/buy/browse/overview.html
 type BrowseService service
 
-// Valid values for the "buyingOptions" item field.
-const (
-	BrowseBuyingOptionAuction    = "AUCTION"
-	BrowseBuyingOptionFixedPrice = "FIXED_PRICE"
-)
-
 // OptBrowseContextualLocation adds the header containing contextualLocation.
 // It is strongly recommended that you use it when submitting Browse API methods.
 //
@@ -522,31 +516,6 @@ type Compatibility struct {
 		} `json:"parameters"`
 		Subdomain string `json:"subdomain"`
 	} `json:"warnings"`
-}
-
-// Valid values for the "compatibilityStatus" compatibility field.
-const (
-	BrowseCheckComoatibilityCompatible    = "COMPATIBLE"
-	BrowseCheckComoatibilityNotCompatible = "NOT_COMPATIBLE"
-	BrowseCheckComoatibilityUndertermined = "UNDETERMINED"
-)
-
-// CheckCompatibility checks a product is compatible with the specified item.
-//
-// eBay API docs: https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/checkCompatibility
-func (s *BrowseService) CheckCompatibility(ctx context.Context, itemID, marketplaceID string, properties []CompatibilityProperty, opts ...Opt) (Compatibility, error) {
-	type payload struct {
-		CompatibilityProperties []CompatibilityProperty `json:"compatibilityProperties"`
-	}
-	pl := payload{properties}
-	u := fmt.Sprintf("buy/browse/v1/item/%s/check_compatibility", itemID)
-	opts = append(opts, OptBuyMarketplace(marketplaceID))
-	req, err := s.client.NewRequest(http.MethodPost, u, &pl, opts...)
-	if err != nil {
-		return Compatibility{}, err
-	}
-	var c Compatibility
-	return c, s.client.Do(ctx, req, &c)
 }
 
 // Search represents the result of an eBay search.

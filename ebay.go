@@ -20,12 +20,10 @@ const (
 	SandboxBaseURL = "https://api.sandbox.ebay.com/"
 )
 
-// Some eBay API scopes.
-//
+// ScopeRoot scope definition.
 // eBay API docs: https://developer.ebay.com/api-docs/static/oauth-scopes.html
 const (
 	ScopeRoot            = "https://api.ebay.com/oauth/api_scope"
-	ScopeBuyOfferAuction = "https://api.ebay.com/oauth/api_scope/buy.offer.auction"
 )
 
 // BuyAPI regroups the eBay Buy APIs.
@@ -33,7 +31,6 @@ const (
 // eBay API docs: https://developer.ebay.com/api-docs/buy/static/buy-landing.html
 type BuyAPI struct {
 	Browse *BrowseService
-	Offer  *OfferService
 }
 
 // Client manages communication with the eBay API.
@@ -75,7 +72,6 @@ func newClient(httpclient *http.Client, baseURL string) *Client {
 	c := &Client{client: httpclient, baseURL: url}
 	c.Buy = BuyAPI{
 		Browse: (*BrowseService)(&service{c}),
-		Offer:  (*OfferService)(&service{c}),
 	}
 	return c
 }

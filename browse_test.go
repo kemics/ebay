@@ -3,11 +3,10 @@ package ebay_test
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"testing"
 
-	"github.com/jybp/ebay"
+	"github.com/kemics/ebay"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -90,33 +89,6 @@ func TestGetItemByGroupID(t *testing.T) {
 	it, err := client.Buy.Browse.GetItemByGroupID(context.Background(), "151915076499")
 	assert.Nil(t, err)
 	assert.Equal(t, "itemId", it.Items[0].ItemID)
-}
-
-func TestCheckCompatibility(t *testing.T) {
-	client, mux, teardown := setup(t)
-	defer teardown()
-
-	mux.HandleFunc("/buy/browse/v1/item/v1|202117468662|0/check_compatibility", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			t.Fatalf("expected POST method, got: %s", r.Method)
-		}
-		assert.Equal(t, ebay.BuyMarketplaceUSA, r.Header.Get("X-EBAY-C-MARKETPLACE-ID"))
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			t.Fatalf("%+v", err)
-		}
-		assert.Equal(t, `{"compatibilityProperties":[{"name":"0","value":"1"},{"name":"2","value":"3"}]}
-`, string(body))
-		fmt.Fprint(w, `{"compatibilityStatus": "NOT_COMPATIBLE", "warnings": [{"category" : "category"}]}`)
-	})
-	compatibilityProperties := []ebay.CompatibilityProperty{
-		{Name: "0", Value: "1"},
-		{Name: "2", Value: "3"},
-	}
-	compatibility, err := client.Buy.Browse.CheckCompatibility(context.Background(), "v1|202117468662|0", ebay.BuyMarketplaceUSA, compatibilityProperties)
-	assert.Nil(t, err)
-	assert.Equal(t, "NOT_COMPATIBLE", compatibility.CompatibilityStatus)
-	assert.Equal(t, "category", compatibility.Warnings[0].Category)
 }
 
 func TestSearch(t *testing.T) {
