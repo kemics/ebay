@@ -153,13 +153,13 @@ type LegacyItem struct {
 // https://developer.ebay.com/api-docs/buy/static/api-browse.html#Legacy
 //
 // eBay API docs: https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/getItemByLegacyId
-func (s *BrowseService) GetItemByLegacyID(ctx context.Context, itemLegacyID string, opts ...Opt) (CompactItem, error) {
+func (s *BrowseService) GetItemByLegacyID(ctx context.Context, itemLegacyID string, opts ...Opt) (LegacyItem, error) {
 	u := fmt.Sprintf("buy/browse/v1/item/get_item_by_legacy_id?legacy_item_id=%s", itemLegacyID)
 	req, err := s.client.NewRequest(http.MethodGet, u, nil, opts...)
 	if err != nil {
-		return CompactItem{}, err
+		return LegacyItem{}, err
 	}
-	var it CompactItem
+	var it LegacyItem
 	return it, s.client.Do(ctx, req, &it)
 }
 
