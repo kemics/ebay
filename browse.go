@@ -371,109 +371,111 @@ func (s *BrowseService) GetItem(ctx context.Context, itemID string, opts ...Opt)
 	return it, s.client.Do(ctx, req, &it)
 }
 
-// ItemsByGroup represents eBay items by group.
-type ItemsByGroup struct {
-	Items []struct {
-		ItemID             string `json:"itemId"`
-		SellerItemRevision string `json:"sellerItemRevision"`
-		Title              string `json:"title"`
-		ShortDescription   string `json:"shortDescription"`
-		Price              struct {
+type ItemFromGroup struct {
+	ItemID             string `json:"itemId"`
+	SellerItemRevision string `json:"sellerItemRevision"`
+	Title              string `json:"title"`
+	ShortDescription   string `json:"shortDescription"`
+	Price              struct {
+		Value    string `json:"value"`
+		Currency string `json:"currency"`
+	} `json:"price"`
+	CategoryPath string `json:"categoryPath"`
+	Condition    string `json:"condition"`
+	ConditionID  string `json:"conditionId"`
+	ItemLocation struct {
+		City    string `json:"city"`
+		Country string `json:"country"`
+	} `json:"itemLocation"`
+	Image struct {
+		ImageURL string `json:"imageUrl"`
+	} `json:"image"`
+	Color       string    `json:"color"`
+	Material    string    `json:"material"`
+	Pattern     string    `json:"pattern"`
+	SizeType    string    `json:"sizeType"`
+	Brand       string    `json:"brand"`
+	ItemEndDate time.Time `json:"itemEndDate"`
+	Seller      struct {
+		Username           string `json:"username"`
+		FeedbackPercentage string `json:"feedbackPercentage"`
+		FeedbackScore      int    `json:"feedbackScore"`
+	} `json:"seller"`
+	EstimatedAvailabilities []struct {
+		DeliveryOptions             []string `json:"deliveryOptions"`
+		AvailabilityThresholdType   string   `json:"availabilityThresholdType"`
+		AvailabilityThreshold       int      `json:"availabilityThreshold"`
+		EstimatedAvailabilityStatus string   `json:"estimatedAvailabilityStatus"`
+		EstimatedSoldQuantity       int      `json:"estimatedSoldQuantity"`
+	} `json:"estimatedAvailabilities"`
+	ShippingOptions []struct {
+		ShippingServiceCode string `json:"shippingServiceCode"`
+		TrademarkSymbol     string `json:"trademarkSymbol,omitempty"`
+		ShippingCarrierCode string `json:"shippingCarrierCode,omitempty"`
+		Type                string `json:"type"`
+		ShippingCost        struct {
 			Value    string `json:"value"`
 			Currency string `json:"currency"`
-		} `json:"price"`
-		CategoryPath string `json:"categoryPath"`
-		Condition    string `json:"condition"`
-		ConditionID  string `json:"conditionId"`
-		ItemLocation struct {
-			City    string `json:"city"`
+		} `json:"shippingCost"`
+		QuantityUsedForEstimate       int       `json:"quantityUsedForEstimate"`
+		MinEstimatedDeliveryDate      time.Time `json:"minEstimatedDeliveryDate"`
+		MaxEstimatedDeliveryDate      time.Time `json:"maxEstimatedDeliveryDate"`
+		ShipToLocationUsedForEstimate struct {
 			Country string `json:"country"`
-		} `json:"itemLocation"`
-		Image struct {
+		} `json:"shipToLocationUsedForEstimate"`
+		AdditionalShippingCostPerUnit struct {
+			Value    string `json:"value"`
+			Currency string `json:"currency"`
+		} `json:"additionalShippingCostPerUnit"`
+		ShippingCostType string `json:"shippingCostType"`
+	} `json:"shippingOptions"`
+	ShipToLocations struct {
+		RegionIncluded []struct {
+			RegionName string `json:"regionName"`
+			RegionType string `json:"regionType"`
+		} `json:"regionIncluded"`
+		RegionExcluded []struct {
+			RegionName string `json:"regionName"`
+			RegionType string `json:"regionType"`
+		} `json:"regionExcluded"`
+	} `json:"shipToLocations"`
+	ReturnTerms struct {
+		ReturnsAccepted         bool   `json:"returnsAccepted"`
+		RefundMethod            string `json:"refundMethod"`
+		ReturnMethod            string `json:"returnMethod"`
+		ReturnShippingCostPayer string `json:"returnShippingCostPayer"`
+		ReturnPeriod            struct {
+			Value int    `json:"value"`
+			Unit  string `json:"unit"`
+		} `json:"returnPeriod"`
+	} `json:"returnTerms"`
+	LocalizedAspects []struct {
+		Type  string `json:"type"`
+		Name  string `json:"name"`
+		Value string `json:"value"`
+	} `json:"localizedAspects"`
+	TopRatedBuyingExperience bool     `json:"topRatedBuyingExperience"`
+	BuyingOptions            []string `json:"buyingOptions"`
+	PrimaryItemGroup         struct {
+		ItemGroupID    string `json:"itemGroupId"`
+		ItemGroupType  string `json:"itemGroupType"`
+		ItemGroupHref  string `json:"itemGroupHref"`
+		ItemGroupTitle string `json:"itemGroupTitle"`
+		ItemGroupImage struct {
 			ImageURL string `json:"imageUrl"`
-		} `json:"image"`
-		Color       string    `json:"color"`
-		Material    string    `json:"material"`
-		Pattern     string    `json:"pattern"`
-		SizeType    string    `json:"sizeType"`
-		Brand       string    `json:"brand"`
-		ItemEndDate time.Time `json:"itemEndDate"`
-		Seller      struct {
-			Username           string `json:"username"`
-			FeedbackPercentage string `json:"feedbackPercentage"`
-			FeedbackScore      int    `json:"feedbackScore"`
-		} `json:"seller"`
-		EstimatedAvailabilities []struct {
-			DeliveryOptions             []string `json:"deliveryOptions"`
-			AvailabilityThresholdType   string   `json:"availabilityThresholdType"`
-			AvailabilityThreshold       int      `json:"availabilityThreshold"`
-			EstimatedAvailabilityStatus string   `json:"estimatedAvailabilityStatus"`
-			EstimatedSoldQuantity       int      `json:"estimatedSoldQuantity"`
-		} `json:"estimatedAvailabilities"`
-		ShippingOptions []struct {
-			ShippingServiceCode string `json:"shippingServiceCode"`
-			TrademarkSymbol     string `json:"trademarkSymbol,omitempty"`
-			ShippingCarrierCode string `json:"shippingCarrierCode,omitempty"`
-			Type                string `json:"type"`
-			ShippingCost        struct {
-				Value    string `json:"value"`
-				Currency string `json:"currency"`
-			} `json:"shippingCost"`
-			QuantityUsedForEstimate       int       `json:"quantityUsedForEstimate"`
-			MinEstimatedDeliveryDate      time.Time `json:"minEstimatedDeliveryDate"`
-			MaxEstimatedDeliveryDate      time.Time `json:"maxEstimatedDeliveryDate"`
-			ShipToLocationUsedForEstimate struct {
-				Country string `json:"country"`
-			} `json:"shipToLocationUsedForEstimate"`
-			AdditionalShippingCostPerUnit struct {
-				Value    string `json:"value"`
-				Currency string `json:"currency"`
-			} `json:"additionalShippingCostPerUnit"`
-			ShippingCostType string `json:"shippingCostType"`
-		} `json:"shippingOptions"`
-		ShipToLocations struct {
-			RegionIncluded []struct {
-				RegionName string `json:"regionName"`
-				RegionType string `json:"regionType"`
-			} `json:"regionIncluded"`
-			RegionExcluded []struct {
-				RegionName string `json:"regionName"`
-				RegionType string `json:"regionType"`
-			} `json:"regionExcluded"`
-		} `json:"shipToLocations"`
-		ReturnTerms struct {
-			ReturnsAccepted         bool   `json:"returnsAccepted"`
-			RefundMethod            string `json:"refundMethod"`
-			ReturnMethod            string `json:"returnMethod"`
-			ReturnShippingCostPayer string `json:"returnShippingCostPayer"`
-			ReturnPeriod            struct {
-				Value int    `json:"value"`
-				Unit  string `json:"unit"`
-			} `json:"returnPeriod"`
-		} `json:"returnTerms"`
-		LocalizedAspects []struct {
-			Type  string `json:"type"`
-			Name  string `json:"name"`
-			Value string `json:"value"`
-		} `json:"localizedAspects"`
-		TopRatedBuyingExperience bool     `json:"topRatedBuyingExperience"`
-		BuyingOptions            []string `json:"buyingOptions"`
-		PrimaryItemGroup         struct {
-			ItemGroupID    string `json:"itemGroupId"`
-			ItemGroupType  string `json:"itemGroupType"`
-			ItemGroupHref  string `json:"itemGroupHref"`
-			ItemGroupTitle string `json:"itemGroupTitle"`
-			ItemGroupImage struct {
-				ImageURL string `json:"imageUrl"`
-			} `json:"itemGroupImage"`
-			ItemGroupAdditionalImages []struct {
-				ImageURL string `json:"imageUrl"`
-			} `json:"itemGroupAdditionalImages"`
-		} `json:"primaryItemGroup"`
-		EnabledForGuestCheckout bool   `json:"enabledForGuestCheckout"`
-		AdultOnly               bool   `json:"adultOnly"`
-		CategoryID              string `json:"categoryId"`
-	} `json:"items"`
+		} `json:"itemGroupImage"`
+		ItemGroupAdditionalImages []struct {
+			ImageURL string `json:"imageUrl"`
+		} `json:"itemGroupAdditionalImages"`
+	} `json:"primaryItemGroup"`
+	EnabledForGuestCheckout bool   `json:"enabledForGuestCheckout"`
+	AdultOnly               bool   `json:"adultOnly"`
+	CategoryID              string `json:"categoryId"`
+}
+
+// ItemsByGroup represents eBay items by group.
+type ItemsByGroup struct {
+	Items ItemFromGroup `json:"items"`
 	CommonDescriptions []struct {
 		Description string   `json:"description"`
 		ItemIds     []string `json:"itemIds"`
