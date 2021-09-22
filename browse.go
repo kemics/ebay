@@ -473,13 +473,15 @@ type ItemFromGroup struct {
 	CategoryID              string `json:"categoryId"`
 }
 
+type CommonDescriptionFromGroup struct {
+	Description string   `json:"description"`
+	ItemIds     []string `json:"itemIds"`
+}
+
 // ItemsByGroup represents eBay items by group.
 type ItemsByGroup struct {
-	Items []ItemFromGroup `json:"items"`
-	CommonDescriptions []struct {
-		Description string   `json:"description"`
-		ItemIds     []string `json:"itemIds"`
-	} `json:"commonDescriptions"`
+	Items              []ItemFromGroup              `json:"items"`
+	CommonDescriptions []CommonDescriptionFromGroup `json:"commonDescriptions"`
 }
 
 // GetItemByGroupID retrieves the details of the individual items in an item group.
