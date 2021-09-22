@@ -475,7 +475,7 @@ type ItemFromGroup struct {
 
 // ItemsByGroup represents eBay items by group.
 type ItemsByGroup struct {
-	Items ItemFromGroup `json:"items"`
+	Items []ItemFromGroup `json:"items"`
 	CommonDescriptions []struct {
 		Description string   `json:"description"`
 		ItemIds     []string `json:"itemIds"`
