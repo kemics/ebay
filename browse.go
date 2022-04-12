@@ -146,6 +146,7 @@ type LegacyItem struct {
 	EnabledForGuestCheckout  bool     `json:"enabledForGuestCheckout"`
 	AdultOnly                bool     `json:"adultOnly"`
 	CategoryID               string   `json:"categoryId"`
+	ListingMarketplaceId     string   `json:"listingMarketplaceId"`
 }
 
 // GetItemByLegacyID retrieves an item by legacy ID.
