@@ -472,6 +472,7 @@ type ItemFromGroup struct {
 	EnabledForGuestCheckout bool   `json:"enabledForGuestCheckout"`
 	AdultOnly               bool   `json:"adultOnly"`
 	CategoryID              string `json:"categoryId"`
+	ListingMarketplaceId    string `json:"listingMarketplaceId"`
 }
 
 type CommonDescriptionFromGroup struct {
