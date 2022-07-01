@@ -33,6 +33,8 @@ func OptBrowseContextualLocation(country, zip string) func(*http.Request) {
 // LegacyItem represents the legacy representation of an eBay item.
 type LegacyItem struct {
 	ItemID             string `json:"itemId"`
+	ItemCreationDate   string `json:"itemCreationDate"`
+	LegacyItemId       string `json:"legacyItemId"`
 	SellerItemRevision string `json:"sellerItemRevision"`
 	Title              string `json:"title"`
 	ShortDescription   string `json:"shortDescription"`
@@ -196,12 +198,15 @@ func (s *BrowseService) GetCompactItem(ctx context.Context, itemID string, opts 
 
 // Item represents an eBay item.
 type Item struct {
-	ItemID             string `json:"itemId"`
-	SellerItemRevision string `json:"sellerItemRevision"`
-	Title              string `json:"title"`
-	Subtitle           string `json:"subtitle"`
-	ShortDescription   string `json:"shortDescription"`
-	Price              struct {
+	ItemID               string `json:"itemId"`
+	ItemCreationDate     string `json:"itemCreationDate"`
+	ListingMarketplaceId string `json:"listingMarketplaceId"`
+	LegacyItemId         string `json:"legacyItemId"`
+	SellerItemRevision   string `json:"sellerItemRevision"`
+	Title                string `json:"title"`
+	Subtitle             string `json:"subtitle"`
+	ShortDescription     string `json:"shortDescription"`
+	Price                struct {
 		Value    string `json:"value"`
 		Currency string `json:"currency"`
 	} `json:"price"`
@@ -375,6 +380,8 @@ func (s *BrowseService) GetItem(ctx context.Context, itemID string, opts ...Opt)
 type ItemFromGroup struct {
 	ItemID             string `json:"itemId"`
 	SellerItemRevision string `json:"sellerItemRevision"`
+	ItemCreationDate   string `json:"itemCreationDate"`
+	LegacyItemId       string `json:"legacyItemId"`
 	Title              string `json:"title"`
 	ShortDescription   string `json:"shortDescription"`
 	Price              struct {
